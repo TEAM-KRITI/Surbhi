@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Alexa ✘ Music</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root{--bg:#100d1f;--card:#231a4a;--pill:#3b2670;--fg:#fff;--mut:#a79bd0;--acc:#9b5cf6;--sk:#ececec}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font:16px Roboto,system-ui,sans-serif;background:var(--bg);color:var(--fg);display:flex;flex-direction:column;padding:14px 18px calc(14px + env(safe-area-inset-bottom))}
+#sk{position:fixed;inset:0;background:#fff;display:grid;place-items:center;z-index:20}
+#sk div{display:grid;grid-template-columns:repeat(2,29px);gap:7px}
+#sk i{height:29px;border-radius:6px;background:var(--sk);animation:p 1.2s infinite}
+#sk i:nth-child(2){animation-delay:.15s}#sk i:nth-child(3){animation-delay:.45s}#sk i:nth-child(4){animation-delay:.3s}
+@keyframes p{50%{opacity:.35}}
+.top{display:flex;justify-content:space-between}
+.pill{background:var(--pill);border-radius:30px;padding:14px 20px;font-weight:500;border:0;color:#fff;font-size:17px}
+.head{display:flex;justify-content:space-between;align-items:flex-start;margin:14px 0 22px}
+.dots{width:56px;height:56px;border-radius:50%;background:var(--pill);border:0;color:#fff;font-size:22px}
+.ttl{text-align:right}.ttl b{display:inline-block;font-size:26px;border-bottom:3px solid #fff;padding-bottom:2px}
+.ttl div{color:var(--mut);margin-top:8px;display:flex;gap:8px;align-items:center;justify-content:flex-end}
+.ttl i{width:11px;height:11px;border-radius:50%;background:#34c759}
+.cap{color:var(--mut);margin:0 4px 10px}
+.box{background:var(--card);border-radius:26px;padding:8px 18px}
+.inv{display:flex;gap:18px;align-items:center;color:#8e54f0;font-weight:600;font-size:22px;padding:18px 0;border-bottom:1px solid #ffffff10;width:100%;background:none;border-left:0;border-right:0;border-top:0}
+.p{display:flex;gap:14px;align-items:center;padding:14px 0}
+.av{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;font-size:26px;font-weight:500;background:#7b3fa0;flex:none}
+.av.b{background:#2a7fd4}
+.nm{font-weight:600;font-size:19px;display:flex;gap:10px;align-items:center}
+.tag{background:var(--pill);color:#8e54f0;font-weight:400;font-size:16px;border-radius:14px;padding:3px 14px}
+.st{color:var(--mut);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
+.bar{height:3px;background:#ffffff15;border-radius:2px;margin-top:6px;overflow:hidden}.bar b{display:block;height:100%;width:0;background:var(--acc)}
+.sp{flex:1}
+.bot{display:flex;justify-content:space-between;align-items:flex-end;margin-top:auto}
+.bot>div{text-align:center;font-size:17px}
+.bot button{display:grid;place-items:center;width:62px;height:62px;border-radius:50%;border:0;background:var(--pill);color:#fff;font-size:24px;margin:0 auto 6px}
+.bot .big{width:106px;height:106px;font-size:44px;background:linear-gradient(135deg,#8e54f0,#c026d3);box-shadow:0 0 50px #9b5cf655}
+.bot .lv{background:#6a2236;color:#ff8a8a}
+.sheet{position:fixed;inset:0;background:var(--bg);padding:16px 18px;overflow:auto;display:none;z-index:10}
+.sheet.on{display:block}
+input{width:100%;padding:14px 16px;border-radius:16px;border:0;background:var(--card);color:#fff;font-size:16px;margin:14px 0}
+.row{display:flex;gap:12px;align-items:center;padding:8px 0}
+.row img{width:52px;height:52px;border-radius:10px;object-fit:cover;background:var(--card)}
+.row .t{font-size:15px;line-height:1.25}.row .m{color:var(--mut);font-size:13px}
+.row button{margin-left:auto;border:0;background:var(--acc);color:#fff;border-radius:16px;padding:8px 14px}
+#toast{position:fixed;left:50%;top:90px;transform:translateX(-50%);background:#000c;padding:8px 14px;border-radius:16px;display:none;z-index:30}
+</style></head><body>
+<div id="sk"><div><i></i><i></i><i></i><i></i></div></div>
+<div class="top"><button class="pill" id="close">✕&nbsp; Close</button></div>
+<div class="head"><button class="dots" id="inv2">•••</button>
+<div class="ttl"><b>Voice Chat</b><div><i></i><span id="cnt">1 participant</span></div></div></div>
+<div class="cap" id="cap">1 participant</div>
+<div class="box">
+<button class="inv" id="inv"><span>👤+</span>Invite members</button>
+<div class="p"><div class="av b">♪</div><div style="min-width:0"><div class="nm" id="bn">Music Bot</div>
+<div class="st" id="bs">idle</div><div class="bar"><b id="pb"></b></div></div></div>
+<div class="p" style="border-top:1px solid #ffffff10"><div class="av" id="av">G</div><div>
+<div class="nm"><span id="me">Guest (you)</span><span class="tag" id="role" style="display:none">admin</span></div>
+<div class="st">listening</div></div></div>
+</div>
+<div class="sp"></div>
+<div class="bot">
+<div><button id="bs1">🔍</button>Search</div>
+<div><button id="bq">☰</button>Queue</div>
+<div><button class="big" id="pp">▶</button>Play</div>
+<div><button id="sk2">⏭</button>Skip</div>
+<div><button class="lv" id="stop">⏹</button>Leave</div>
+</div>
+<div class="sheet" id="s1"><button class="pill" data-x>✕&nbsp; Close</button>
+<input id="q" placeholder="Search song on YouTube…" enterkeyhint="search"><div id="res"></div></div>
+<div class="sheet" id="s2"><button class="pill" data-x>✕&nbsp; Close</button><h3 style="margin:16px 4px">Queue</h3><div id="queue"></div></div>
+<div id="toast"></div>
+<script>
+const tg=Telegram.WebApp;tg.ready();tg.expand();
+try{tg.setHeaderColor("#ffffff")}catch(e){}
+const chat=new URLSearchParams(location.search).get("chat_id")||tg.initDataUnsafe.start_param;
+const H={"X-Init-Data":tg.initData,"Content-Type":"application/json"};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function toast(t){const e=$("toast");e.textContent=t;e.style.display="block";setTimeout(()=>e.style.display="none",2200)}
+async function api(p,o){const r=await fetch(`/api/${p}${p.includes("?")?"&":"?"}chat_id=${chat}`,{headers:H,...o});
+ if(!r.ok)throw new Error((await r.text()).slice(0,80)||r.status);return r.json()}
+let S={};
+async function refresh(){try{S=await api("state");const n=S.queue[0];
+ $("me").textContent=S.me.name+" (you)";$("av").textContent=S.me.name[0].toUpperCase();
+ $("role").style.display=S.me.admin?"":"none";$("bn").textContent=S.bot;
+ $("bs").textContent=n?(S.playing?"▶ ":"⏸ ")+n.title:"idle — search a song";
+ $("pb").style.width=S.seconds?Math.min(100,S.played/S.seconds*100)+"%":"0";
+ $("pp").textContent=S.playing?"⏸":"▶";$("pp").nextSibling;
+ $("queue").innerHTML=S.queue.slice(1).map((x,i)=>`<div class="row"><span class="m">${i+1}</span><img src="${esc(x.thumb)}"><div><div class="t">${esc(x.title)}</div><div class="m">${esc(x.dur)}</div></div></div>`).join("")||'<div class="m">Queue is empty</div>';
+}catch(e){toast(e.message)}$("sk").style.display="none"}
+async function ctl(a){try{await api("control",{method:"POST",body:JSON.stringify({action:a})});refresh()}catch(e){toast(e.message)}}
+$("pp").onclick=()=>ctl(S.playing?"pause":"resume");
+$("sk2").onclick=()=>ctl("skip");$("stop").onclick=()=>ctl("stop");
+$("close").onclick=()=>tg.close();
+const share=()=>tg.openTelegramLink("https://t.me/share/url?url="+encodeURIComponent("https://t.me/"+(tg.initDataUnsafe.chat?.username||"")));
+$("inv").onclick=$("inv2").onclick=()=>tg.openTelegramLink("https://t.me/share/url?text="+encodeURIComponent("Join the voice chat 🎶"));
+$("bs1").onclick=()=>$("s1").classList.add("on");$("bq").onclick=()=>$("s2").classList.add("on");
+document.querySelectorAll("[data-x]").forEach(b=>b.onclick=()=>b.parentElement.classList.remove("on"));
+let tm;$("q").oninput=e=>{clearTimeout(tm);const v=e.target.value.trim();if(!v){$("res").innerHTML="";return}
+ tm=setTimeout(async()=>{try{const r=await api("search?q="+encodeURIComponent(v));
+ $("res").innerHTML=r.results.map(x=>`<div class="row"><img src="${esc(x.thumb)}"><div style="min-width:0"><div class="t">${esc(x.title)}</div><div class="m">${esc(x.dur)}</div></div><button data-id="${esc(x.id)}">Play</button></div>`).join("")}catch(e){toast(e.message)}},450)};
+$("res").onclick=async e=>{const id=e.target.dataset&&e.target.dataset.id;if(!id)return;
+ e.target.disabled=true;toast("Adding…");
+ try{await api("play",{method:"POST",body:JSON.stringify({id})});toast("Added ✅");$("s1").classList.remove("on");refresh()}catch(x){toast(x.message)}e.target.disabled=false};
+refresh();setInterval(refresh,4000);
+</script></body></html>
